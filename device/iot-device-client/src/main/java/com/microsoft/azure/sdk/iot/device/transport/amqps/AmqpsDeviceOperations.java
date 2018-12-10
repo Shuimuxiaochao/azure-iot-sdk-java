@@ -78,14 +78,6 @@ public class AmqpsDeviceOperations
         this.senderLinkTag = uuidStr;
         this.receiverLinkTag = uuidStr;
 
-        // Codes_SRS_AMQPSDEVICEOPERATIONS_12_003: [The constructor shall initialize sender and receiver endpoint path members to empty string.]
-        this.senderLinkEndpointPath = "";
-        this.receiverLinkEndpointPath = "";
-
-        // Codes_SRS_AMQPSDEVICEOPERATIONS_12_004: [The constructor shall initialize sender and receiver link address members to empty string.]
-        this.senderLinkAddress = "";
-        this.receiverLinkAddress = "";
-
         // Codes_SRS_AMQPSDEVICEOPERATIONS_12_005: [The constructor shall initialize sender and receiver link objects to null.]
         this.senderLink = null;
         this.receiverLink = null;
@@ -465,6 +457,7 @@ public class AmqpsDeviceOperations
 
         //Codes_SRS_AMQPSDEVICEOPERATION_34_010: [The function shall copy the correlationId, messageId, To, userId, contenty type, and content encoding properties to the IotHubMessage properties.]
         Properties properties = protonMsg.getProperties();
+
         if (properties != null)
         {
             if (properties.getCorrelationId() != null)
