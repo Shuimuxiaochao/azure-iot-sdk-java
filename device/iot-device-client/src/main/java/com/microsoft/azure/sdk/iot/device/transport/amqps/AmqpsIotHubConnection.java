@@ -556,6 +556,8 @@ public final class AmqpsIotHubConnection extends BaseHandler implements IotHubTr
     @Override
     public void onDelivery(Event event)
     {
+        System.out.println("$$$$$$$$$$$$ onDelivery $$$$$$$$$$$$");
+
         logger.LogDebug("Entered in method %s", logger.getMethodName());
 
         AmqpsMessage amqpsMessage = null;
@@ -564,6 +566,8 @@ public final class AmqpsIotHubConnection extends BaseHandler implements IotHubTr
         try
         {
             String linkName = event.getLink().getName();
+            System.out.println("$$$$$$$$$$$$ message received from server on link " + linkName + " $$$$$$$$$$$$");
+
             amqpsMessage = this.amqpsSessionManager.getMessageFromReceiverLink(linkName);
         }
         catch (TransportException e)
@@ -573,6 +577,8 @@ public final class AmqpsIotHubConnection extends BaseHandler implements IotHubTr
 
         if (amqpsMessage != null)
         {
+            System.out.println("$$$$$$$$$$$$ amqpsMessage was not null $$$$$$$$$$$$");
+
             // Codes_SRS_AMQPSIOTHUBCONNECTION_15_050: [All the listeners shall be notified that a message was received from the server.]
             try
             {
@@ -585,9 +591,13 @@ public final class AmqpsIotHubConnection extends BaseHandler implements IotHubTr
         }
         else
         {
+            System.out.println("$$$$$$$$$$$$ amqpsMessage was null $$$$$$$$$$$$");
+
             //Sender specific section for dispositions it receives
             if (event.getType() == Event.Type.DELIVERY)
             {
+                System.out.println("$$$$$$$$$$$$ event type: delivery $$$$$$$$$$$$");
+
                 logger.LogInfo("Reading the delivery event in Sender link, method name is %s ", logger.getMethodName());
                 // Codes_SRS_AMQPSIOTHUBCONNECTION_15_038: [If this link is the Sender link and the event type is DELIVERY, the event handler shall get the Delivery (Proton) object from the event.]
                 Delivery d = event.getDelivery();
@@ -647,6 +657,11 @@ public final class AmqpsIotHubConnection extends BaseHandler implements IotHubTr
 
                 // release the delivery object which created in sendMessage().
                 d.free();
+            }
+            else
+            {
+                System.out.println("$$$$$$$$$$$$ event type was not delivery...?????? $$$$$$$$$$$$");
+
             }
         }
 
@@ -860,12 +875,19 @@ public final class AmqpsIotHubConnection extends BaseHandler implements IotHubTr
 
         logger.LogInfo("All the listeners are informed that a message has been received, method name is %s ", logger.getMethodName());
 
+        System.out.println("$$$$$$$$$$$$ message received from server $$$$$$$$$$$$");
+
+        System.out.println("$$$$$$$$$$$$ Type: " + amqpsMessage.getAmqpsMessageType() + " $$$$$$$$$$$$");
+
         AmqpsConvertFromProtonReturnValue amqpsHandleMessageReturnValue = this.convertFromProton(amqpsMessage, amqpsMessage.getDeviceClientConfig());
 
         if (amqpsHandleMessageReturnValue == null)
         {
+            System.out.println("$$$$$$$$$$$$ message might be cbs $$$$$$$$$$$$");
+
             if (amqpsMessage.getAmqpsMessageType() == MessageType.CBS_AUTHENTICATION)
             {
+                System.out.println("$$$$$$$$$$$$ message was cbs $$$$$$$$$$$$");
                 if (amqpsMessage.getApplicationProperties() != null && amqpsMessage.getApplicationProperties().getValue() != null)
                 {
                     Map<String, Object> properties = amqpsMessage.getApplicationProperties().getValue();
@@ -904,6 +926,8 @@ public final class AmqpsIotHubConnection extends BaseHandler implements IotHubTr
                 return;
             }
 
+            System.out.println("$$$$$$$$$$$$ NO HANDLER FOUND FOR MESSAGE $$$$$$$$$$$$");
+
             // Should never happen; message type was not telemetry, twin, methods, or CBS
             logger.LogError("No handler found for received message, method name is %s ", logger.getMethodName());
             return;
@@ -912,6 +936,7 @@ public final class AmqpsIotHubConnection extends BaseHandler implements IotHubTr
         // Codes_SRS_AMQPSTRANSPORT_12_008: [The function shall return if there is no message callback defined.]
         if (amqpsHandleMessageReturnValue.getMessageCallback() == null)
         {
+            System.out.println("$$$$$$$$$$$$ NO CALLBACK FOUND FOR MESSAGE $$$$$$$$$$$$");
             logger.LogError("Callback is not defined therefore response to IoT Hub cannot be generated. All received messages will be removed from receive message queue, method name is %s ", logger.getMethodName());
             throw new TransportException("callback is not defined");
         }

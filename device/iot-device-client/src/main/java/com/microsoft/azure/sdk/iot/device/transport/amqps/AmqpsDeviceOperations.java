@@ -462,6 +462,7 @@ public class AmqpsDeviceOperations
         {
             if (properties.getCorrelationId() != null)
             {
+                System.out.println("CORR ID: " + properties.getCorrelationId());
                 iotHubTransportMessage.setCorrelationId(properties.getCorrelationId().toString());
             }
 
@@ -498,6 +499,9 @@ public class AmqpsDeviceOperations
             for (Map.Entry<String, Object> entry : applicationProperties.entrySet())
             {
                 String propertyKey = entry.getKey();
+
+                System.out.println("Application property found: " + propertyKey + " with value " + entry.getValue().toString());
+
                 if (propertyKey.equals(INPUT_NAME_PROPERTY_KEY))
                 {
                     //Codes_SRS_AMQPSDEVICEOPERATION_34_052: [If the amqp message contains an application property of "x-opt-input-name", this function shall assign its value to the IotHub message's input name.]

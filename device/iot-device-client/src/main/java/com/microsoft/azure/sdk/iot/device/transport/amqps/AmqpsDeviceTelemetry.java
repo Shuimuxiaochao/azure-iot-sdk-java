@@ -153,11 +153,14 @@ public final class AmqpsDeviceTelemetry extends AmqpsDeviceOperations
         if (((amqpsMessage.getAmqpsMessageType() == null) || (amqpsMessage.getAmqpsMessageType() == MessageType.DEVICE_TELEMETRY)) &&
             (this.deviceClientConfig.getDeviceId().equals(deviceClientConfig.getDeviceId())))
         {
+            System.out.println("TELEMETRY MESSAGE FOUND");
             // Codes_SRS_AMQPSDEVICETELEMETRY_12_009: [The function shall create a new IoTHubMessage using the Proton message body.]
             // Codes_SRS_AMQPSDEVICETELEMETRY_12_010: [**The function shall copy the correlationId, messageId, To and userId properties to the IotHubMessage properties.]
             // Codes_SRS_AMQPSDEVICETELEMETRY_12_011: [The function shall copy the Proton application properties to IoTHubMessage properties excluding the reserved property names.]
             Message message = protonMessageToIoTHubMessage(amqpsMessage);
 
+
+            System.out.println("CHECKING FOR MESSAGE CALLBACK TIED TO INPUT NAME " + (Tools.isNullOrEmpty(message.getInputName()) ? "no input name" : message.getInputName()));
             MessageCallback messageCallback = deviceClientConfig.getDeviceTelemetryMessageCallback(message.getInputName());
             Object messageContext = deviceClientConfig.getDeviceTelemetryMessageContext(message.getInputName());
 
@@ -210,6 +213,7 @@ public final class AmqpsDeviceTelemetry extends AmqpsDeviceOperations
     @Override
     protected IotHubTransportMessage protonMessageToIoTHubMessage(MessageImpl protonMsg) throws TransportException
     {
+        System.out.println("CONVERTING PROTON MESSAGE TO IOTHUB MESSAGE");
         // Codes_SRS_AMQPSDEVICETELEMETRY_12_009: [The function shall create a new IoTHubMessage using the Proton message body.]
         IotHubTransportMessage iotHubTransportMessage = super.protonMessageToIoTHubMessage(protonMsg);
         iotHubTransportMessage.setMessageType(MessageType.DEVICE_TELEMETRY);
@@ -221,6 +225,8 @@ public final class AmqpsDeviceTelemetry extends AmqpsDeviceOperations
             Map<Symbol, Object> applicationProperties = protonMsg.getMessageAnnotations().getValue();
             for (Map.Entry<Symbol, Object> entry : applicationProperties.entrySet())
             {
+                System.out.println("Message annotation found: " + entry.getKey() + " with value " + entry.getValue().toString());
+
                 String propertyKey = entry.getKey().toString();
                 if (propertyKey.equals(INPUT_NAME_PROPERTY_KEY))
                 {
