@@ -133,15 +133,15 @@ public class ModuleClient extends InternalClient
      */
     public static ModuleClient createFromEnvironment(IotHubClientProtocol protocol) throws ModuleClientException
     {
-        if (protocol.equals(IotHubClientProtocol.MQTT_WS))
+/*        if (protocol.equals(IotHubClientProtocol.MQTT_WS))
         {
-            protocol = IotHubClientProtocol.AMQPS;
+            protocol = IotHubClientProtocol.AMQPS_WS;
         }
         else
         {
             protocol = IotHubClientProtocol.AMQPS;
         }
-
+*/
         System.out.println("$$$$$$$$$$$USING PROTOCOL:: " + protocol + "$$$$$$$$$$$");
         Map<String, String> envVariables = System.getenv();
 
