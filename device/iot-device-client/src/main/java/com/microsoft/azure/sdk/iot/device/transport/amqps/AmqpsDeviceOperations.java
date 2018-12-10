@@ -111,6 +111,9 @@ public class AmqpsDeviceOperations
             this.senderLinkAddress = String.format(this.senderLinkEndpointPath, deviceId);
             this.receiverLinkAddress = String.format(receiverLinkEndpointPath, deviceId);
         }
+
+        System.out.print("Link sender address: " + this.senderLinkAddress);
+        System.out.print("Link receiver address: " + this.receiverLinkAddress);
     }
 
     /**
